@@ -1,4 +1,4 @@
-# Stormpath React + Express Fullstack Example Project
+# React + Express Fullstack Example Project Using Stormpath
 
 This repository is an example fullstack web application using React on the
 front-end and Express.js as your back-end server. It uses [express-stormpath][]
@@ -25,23 +25,7 @@ You'll need to [Download an API Key Pair](https://docs.stormpath.com/rest/produc
 
 ## 4. Provide Configuration To Your Application
 
-Provide the **API Key ID**, **API Key Secret**, and **Application Href** to your environment, with one of these strategies:
-
-**Unix Environment Variables:**
-
-```bash
-export STORMPATH_CLIENT_APIKEY_ID=YOUR_ID_HERE
-export STORMPATH_CLIENT_APIKEY_SECRET=YOUR_SECRET_HERE
-export STORMPATH_APPLICATION_HREF=YOUR_APP_HREF
-```
-
-**Windows Environment Variables:**
-
-```bash
-set STORMPATH_CLIENT_APIKEY_ID=YOUR_ID_HERE
-set STORMPATH_CLIENT_APIKEY_SECRET=YOUR_SECRET_HERE
-set STORMPATH_APPLICATION_HREF=YOUR_APP_HREF
-```
+Provide the **API Key ID**, **API Key Secret**, and **Application Href** to your environment:
 
 **Place them in a file named `stormpath.yml`, in the directory where you run the dev server:**
 
@@ -72,16 +56,11 @@ Application running at http://localhost:3000
 
 The application should now be running in your browser at [http://localhost:3000](http://localhost:3000).
 
-## Support
+## API DOC
 
-We're here to help if you get stuck.  There are several ways that you can get in touch with a member of our team:
+To generate the API Doc run these command on terminal:
 
-* Send an email to [support@stormpath.com](mailto:support@stormpath.com)
-* Open a Github Issue on this repository.
-* Join us on our Slack channel: [https://talkstormpath.shipit.xyz/](https://talkstormpath.shipit.xyz/)
-
-[Node.js]: https://nodejs.org
-[Stormpath]: https://stormpath.com
-[Stormpath Admin Console]: https://api.stormpath.com
-[stormpath-sdk-react]: https://github.com/stormpath/stormpath-sdk-react
-[express-stormpath]: https://github.com/stormpath/express-stormpath
+```bash
+$ npm install -g apidoc
+$ apidoc -i ./ -e node_modules/ -o src/apidoc
+```
