@@ -19,6 +19,7 @@
     "express": "^4.14.0",
     "express-stormpath": "^3.1.6",
     "globals": "^9.12.0",
+    "mongoose": "^4.7.5",
     "morgan": "^1.7.0",
     "ora": "^0.3.0",
     "react": "^15.3.2",
