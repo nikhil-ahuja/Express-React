@@ -1,6 +1,7 @@
 var errors = require('restify-errors');
 var logger = require('../logger');
 var successHandler = require('../responseHandlers/successHandler');
+var User = require('../models/user');
 const FILE_NAME = 'userService';
 
 exports.saveAccountDetails = function (req, res, next) {
@@ -22,7 +23,15 @@ exports.saveAccountDetails = function (req, res, next) {
                 return next(new errors.InternalServerError(err.userMessage || err.message));
             }
             logger.info('Inside File: '+FILE_NAME+' Function: '+FUNCTION_NAME, req.user);
-            res.json(new successHandler(req.user));
+            User.findOne({email: req.user.email}, function(err, user){
+                if(user){
+                    user.firstName = req.body.givenName;
+                    user.lastName = req.body.surname;
+                    user.email = req.body.email;
+                    user.save();
+                }
+                res.json(new successHandler(req.user));
+            });
         });
     }
 
