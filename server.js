@@ -5,16 +5,17 @@ var path = require('path');
 var express = require('express');
 var webpack = require('webpack');
 var webpackConfig = require('./webpack.config');
-var User = require('./models/user');
+var User = require('./server/models/user');
 var ora = require('ora');
 var mongoose = require('mongoose');
-var config = require('./config');
-var routes = require('./routes');
-var errorHandler = require('./responseHandlers/errorHandler');
+var config = require('./server/config/config');
+var routes = require('./server/routes');
+var errorHandler = require('./server/responseHandlers/errorHandler');
 
 var port = process.env.PORT || 3000;
 
 var app = express();
+
 
 mongoose.connect(config.database.url);
 mongoose.connection.on('error', function () {
@@ -42,9 +43,9 @@ app.use(require('webpack-dev-middleware')(compiler, {
   publicPath: webpackConfig.output.publicPath
 }));
 
-app.use('/css', express.static(__dirname + '/src/css'));
+app.use('/css', express.static(__dirname + '/client/css'));
 
-app.use('/apidoc', express.static(__dirname + '/src/apidoc'));
+app.use('/apidoc', express.static(__dirname + '/client/apidoc'));
 
 app.use(stormpath.init(app, {
   // Disable logging until startup, so that we can catch errors
@@ -93,7 +94,7 @@ app.use(stormpath.init(app, {
 app.use('/', routes);
 
 app.get('*', function (req, res) {
-  res.sendFile(path.join(__dirname, 'src/html/index.html'));
+  res.sendFile(path.join(__dirname, 'client/html/index.html'));
 });
 
 
