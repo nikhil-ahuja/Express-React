@@ -1,6 +1,7 @@
 import React from 'react';
 import CarAction from '../action/CarAction';
 import {Table, Column, Cell} from 'fixed-data-table';
+import AddCarModal from '../modals/AddCarModal';
 
 
 export default class DashboardPage extends React.Component {
@@ -9,8 +10,10 @@ export default class DashboardPage extends React.Component {
     constructor() {
         super();
         this.state = {
-            cars: []
+            cars: [],
+            openModal: false
         };
+        this.addCar = this.addCar.bind(this);
     }
 
     componentWillMount(){
@@ -22,13 +25,39 @@ export default class DashboardPage extends React.Component {
         })
     }
 
+    addCar(){
+        this.setState({
+            openModal: true
+        })
+    }
+
+    closeModal(newCar){
+
+        if(newCar){
+            this.state.cars.push(newCar);
+            this.setState({
+                openModal: false,
+                cars: this.state.cars
+            })
+        }else{
+            this.setState({
+                openModal: false
+            })
+        }
+
+    }
+
     render() {
+        let addModal = <AddCarModal showModal={this.state.openModal} closeModal={this.closeModal.bind(this)} />;
         return (
                 <div className="container">
                     <div className="row">
-                        <div className="col-xs-12">
+                        <div className="col-xs-6">
                             <h3>Dashboard (Cars)</h3>
                             <hr />
+                        </div>
+                        <div className="col-xs-6">
+                            <button className="btn" onClick={this.addCar}>Add Car</button>
                         </div>
                     </div>
                     <Table
@@ -66,6 +95,7 @@ export default class DashboardPage extends React.Component {
 
 
                         </Table>
+                    {addModal}
 
                 </div>
 

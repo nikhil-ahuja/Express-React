@@ -5,4 +5,6 @@ const router = require('express').Router();
 
 router.get('/', stormpath.getUser, carService.getAllCars);
 
+router.post('/', bodyParser.json(), carService.saveCar);
+
 module.exports = router;

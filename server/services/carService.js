@@ -28,9 +28,15 @@ exports.getAllCars = function (req, res, next) {
 exports.saveCar = function (req, res, next) {
     var FUNCTION_NAME = 'saveCar';
 
+    logger.debug('Inside File: '+FILE_NAME+' Function: '+FUNCTION_NAME);
+
+    logger.info('Inside File: '+FILE_NAME+' Function: '+FUNCTION_NAME, req.body);
+
+
     var name = req.body.name;
     var model =  req.body.model;
     var color = req.body.color;
+
 
     if(!name){
         logger.error('Inside File: '+FILE_NAME+' Function: '+FUNCTION_NAME+' Car name is mandatory.');
