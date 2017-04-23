@@ -90,72 +90,54 @@ export default class DashboardPage extends React.Component {
     }
 
     render() {
-        let addModal = <AddCarModal showModal={this.state.openModal} closeModal={this.closeModal.bind(this)} />;
+
         return (
+            <div>
+
                 <div className="container">
                     <div className="row">
-                        <div className="col-xs-6">
-                            <h3>Dashboard (Books)</h3>
+                        <div className="col-xs-12">
+                            <h3>Registration</h3>
                             <hr />
                         </div>
-                        <div className="col-xs-6">
-                            <button className="btn" onClick={this.addBook}>Add Book</button>
-                        </div>
                     </div>
-                    <div className="col-sm-5 col-md-4">
-                        <div className="search-box">
-                            <span className="icon-search"/>
-                            <input className="form-control" ref="searchText" placeholder="Search Book" type="text"
-                                   onChange={this.searchBook}/>
+                    <form className="form-horizontal">
+
+                        <div className="form-group">
+                            <label className="control-label col-sm-2" for="email">First Name:</label>
+                            <div className="col-sm-6">
+                                <input type="text" ref="firstName" className="form-control" id="email" placeholder="Enter First Name" />
+                            </div>
                         </div>
-                    </div>
-                    <Table
-                        rowsCount={this.state.books.length}
-                        rowHeight={60}
-                        headerHeight={40}
-                        width={700}
-                        height={1000}>
 
-                        <Column
-                            header={<Cell>Title</Cell>}
-                            cell={props => (
-                                <Cell {...props}>
-                                    {this.state.books[props.rowIndex].title}
-                                </Cell>
-                            )}
-                            width={150}/>
-                        <Column
-                            header={<Cell>Author</Cell>}
-                            cell={props => (
-                                <Cell {...props}>
-                                    {this.state.books[props.rowIndex].author}
-                                </Cell>
-                            )}
-                            width={100}/>
+                        <div className="form-group">
+                            <label className="control-label col-sm-2" for="email">Last Name:</label>
+                            <div className="col-sm-6">
+                                <input type="text" ref="lastName" className="form-control" id="email" placeholder="Enter Last Name" />
+                            </div>
+                        </div>
 
-                        <Column
-                            header={<Cell>ISBN</Cell>}
-                            cell={props => (
-                                <Cell {...props}>
-                                    {this.state.books[props.rowIndex].isbn}
-                                </Cell>
-                            )}
-                            width={240}/>
+                        <div className="form-group">
+                            <label className="control-label col-sm-2" for="email">Email:</label>
+                            <div className="col-sm-6">
+                                <input type="email" ref="email" className="form-control" id="email" placeholder="Enter email" />
+                            </div>
+                        </div>
+                        <div className="form-group">
+                            <label className="control-label col-sm-2" for="pwd">Password:</label>
+                            <div className="col-sm-6">
+                                <input type="password" ref="password" className="form-control" id="pwd" placeholder="Enter password" />
+                            </div>
+                        </div>
 
-                        <Column
-                            header={<Cell>Action</Cell>}
-                            cell={props => (
-                                <Cell {...props}>
-                                   <span onClick={this.deleteBook.bind(this, this.state.books[props.rowIndex].id)}>Delete</span>
-                                </Cell>
-                            )}
-                            width={100}/>
-
-                        </Table>
-                    {addModal}
-
+                        <div className="form-group">
+                            <div className="col-sm-offset-2 col-sm-10">
+                                <button id="loginUser" type="button" className="btn btn-primary">Submit</button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-
+            </div>
         );
     }
 }

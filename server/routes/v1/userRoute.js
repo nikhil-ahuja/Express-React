@@ -159,8 +159,4 @@ router.post('/oauth/token', bodyParser.json(), userService.getAuthenticationToke
  */
 router.post('/', bodyParser.json(), userService.saveAccountDetails);
 
-router.post('/personal', bodyParser.json(), userService.savePersonalDetails);
-
-router.post('/passport', bodyParser.json(), userService.savePassportDetails);
-
 module.exports = router;
