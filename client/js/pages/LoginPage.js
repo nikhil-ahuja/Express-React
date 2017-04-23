@@ -1,21 +1,39 @@
 import React from 'react';
-import DocumentTitle from 'react-document-title';
-
-import { LoginForm } from 'react-stormpath';
+import { browserHistory, Link } from 'react-router';
+import UserService from '../services/UserService';
 
 export default class LoginPage extends React.Component {
 
-  onFormSubmitSuccess(e, next) {
-    // e will contain values about the event.
-    console.log('Form submitted succesfully', e.data, e.result);
+  constructor() {
+    super();
+    this.state = {
 
-    // The function next() must be called in order for the form to continue processing.
-    next();
+    };
+    this.onFormSubmit = this.onFormSubmit.bind(this);
+  }
+
+  onFormSubmit(){
+
+    let email = this.refs.email.value;
+    let password = this.refs.password.value;
+
+    let postData = {
+
+      email: email,
+      password: password
+    };
+
+    UserService.loginUser(postData).then(function (response) {
+      localStorage.setItem("accessToken",response.data.token);
+      browserHistory.push("/dashboard");
+    }).catch(function (err) {
+      console.log("err: ",err);
+    });
   }
 
   render() {
     return (
-      <DocumentTitle title={`Login`}>
+      <div>
         <div className="container">
           <div className="row">
             <div className="col-xs-12">
@@ -23,9 +41,30 @@ export default class LoginPage extends React.Component {
               <hr />
             </div>
           </div>
-          <LoginForm onSubmitSuccess={this.onFormSubmitSuccess.bind(this)} />
+          <form className="form-horizontal">
+
+            <div className="form-group">
+              <label className="control-label col-sm-2" for="email">Email:</label>
+              <div className="col-sm-6">
+                <input type="email" ref="email" className="form-control" id="email" placeholder="Enter email" />
+              </div>
+            </div>
+            <div className="form-group">
+              <label className="control-label col-sm-2" for="pwd">Password:</label>
+              <div className="col-sm-6">
+                <input type="password" ref="password" className="form-control" id="pwd" placeholder="Enter password" />
+              </div>
+            </div>
+
+            <div className="form-group">
+              <div className="col-sm-offset-2 col-sm-10">
+                <button type="button" onClick={this.onFormSubmit} className="btn btn-default">Submit</button>
+              </div>
+            </div>
+          </form>
+
         </div>
-      </DocumentTitle>
+     </div>
     );
   }
 }

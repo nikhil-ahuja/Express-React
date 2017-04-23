@@ -70,7 +70,7 @@ const router = require('express').Router();
  *       }
  *   }
  */
-router.get('/me', stormpath.getUser, userService.getCurrentUser);
+router.post('/oauth/token', bodyParser.json(), userService.getAuthenticationToken);
 
 
 /**
@@ -157,6 +157,10 @@ router.get('/me', stormpath.getUser, userService.getCurrentUser);
  *       }
  *   }
  */
-router.post('/me', bodyParser.json(), userService.saveAccountDetails);
+router.post('/', bodyParser.json(), userService.saveAccountDetails);
+
+router.post('/personal', bodyParser.json(), userService.savePersonalDetails);
+
+router.post('/passport', bodyParser.json(), userService.savePassportDetails);
 
 module.exports = router;

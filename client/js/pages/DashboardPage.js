@@ -1,7 +1,7 @@
 import React from 'react';
-import CarAction from '../action/CarAction';
+import BookAction from '../action/BookAction';
 import {Table, Column, Cell} from 'fixed-data-table';
-import AddCarModal from '../modals/AddCarModal';
+import AddCarModal from '../modals/AddBookModal';
 
 
 export default class DashboardPage extends React.Component {
@@ -10,34 +10,76 @@ export default class DashboardPage extends React.Component {
     constructor() {
         super();
         this.state = {
-            cars: [],
-            openModal: false
+            books: [],
+            openModal: false,
+            finalList: []
         };
-        this.addCar = this.addCar.bind(this);
+        this.addBook = this.addBook.bind(this);
+        this.searchBook = this.searchBook.bind(this);
     }
 
     componentWillMount(){
         let self = this;
-        CarAction.getCars().then(function (cars) {
-            self.setState({cars: cars.data})
+        BookAction.getBooks().then(function (books) {
+            self.setState({books: books.data, finalList:books.data})
         }).catch(function (error) {
             console.log(error);
         })
     }
 
-    addCar(){
+    deleteBook(bookId){
+        let self = this;
+        let booksData = this.state.books;
+        let indexTobeRemoved;
+        BookAction.deleteBook(bookId).then(function (books) {
+            booksData.forEach(function(book, index) {
+                if(book.id == bookId) {
+                    indexTobeRemoved = index;
+                }
+            });
+            booksData.splice(indexTobeRemoved, 1);
+            self.setState({books: booksData});
+        }).catch(function (error) {
+            console.log(error);
+        })
+    }
+
+    searchBook(event){
+        var updatedList = this.state.finalList;
+        var searchText = event.target.value.trim().toLowerCase();
+
+
+        updatedList = updatedList.filter(function (item) {
+
+            let title = (item.title) ? item.title : '';
+            let isbn = (item.isbn) ? item.isbn : '';
+            let author = (item.author) ? item.author : '';
+
+            return (( title.toLowerCase().search(searchText) !== -1)
+            || (isbn.toLowerCase().includes(searchText.toLowerCase()))
+            || (author.toLowerCase().includes(searchText.toLowerCase())));
+
+        });
+
+        this.setState({books: updatedList});
+
+
+
+    }
+
+    addBook(){
         this.setState({
             openModal: true
         })
     }
 
-    closeModal(newCar){
+    closeModal(newBook){
 
-        if(newCar){
-            this.state.cars.push(newCar);
+        if(newBook){
+            this.state.books.push(newBook);
             this.setState({
                 openModal: false,
-                cars: this.state.cars
+                books: this.state.books
             })
         }else{
             this.setState({
@@ -53,46 +95,61 @@ export default class DashboardPage extends React.Component {
                 <div className="container">
                     <div className="row">
                         <div className="col-xs-6">
-                            <h3>Dashboard (Cars)</h3>
+                            <h3>Dashboard (Books)</h3>
                             <hr />
                         </div>
                         <div className="col-xs-6">
-                            <button className="btn" onClick={this.addCar}>Add Car</button>
+                            <button className="btn" onClick={this.addBook}>Add Book</button>
+                        </div>
+                    </div>
+                    <div className="col-sm-5 col-md-4">
+                        <div className="search-box">
+                            <span className="icon-search"/>
+                            <input className="form-control" ref="searchText" placeholder="Search Book" type="text"
+                                   onChange={this.searchBook}/>
                         </div>
                     </div>
                     <Table
-                        rowsCount={this.state.cars.length}
+                        rowsCount={this.state.books.length}
                         rowHeight={60}
                         headerHeight={40}
-                        width={1000}
+                        width={700}
                         height={1000}>
 
                         <Column
-                            header={<Cell>Car Name</Cell>}
+                            header={<Cell>Title</Cell>}
                             cell={props => (
                                 <Cell {...props}>
-                                    {this.state.cars[props.rowIndex].name}
+                                    {this.state.books[props.rowIndex].title}
                                 </Cell>
                             )}
                             width={150}/>
                         <Column
-                            header={<Cell>Car Model</Cell>}
+                            header={<Cell>Author</Cell>}
                             cell={props => (
                                 <Cell {...props}>
-                                    {this.state.cars[props.rowIndex].model}
+                                    {this.state.books[props.rowIndex].author}
                                 </Cell>
                             )}
                             width={100}/>
 
                         <Column
-                            header={<Cell>Car Color</Cell>}
+                            header={<Cell>ISBN</Cell>}
                             cell={props => (
                                 <Cell {...props}>
-                                    {this.state.cars[props.rowIndex].color}
+                                    {this.state.books[props.rowIndex].isbn}
                                 </Cell>
                             )}
                             width={240}/>
 
+                        <Column
+                            header={<Cell>Action</Cell>}
+                            cell={props => (
+                                <Cell {...props}>
+                                   <span onClick={this.deleteBook.bind(this, this.state.books[props.rowIndex].id)}>Delete</span>
+                                </Cell>
+                            )}
+                            width={100}/>
 
                         </Table>
                     {addModal}

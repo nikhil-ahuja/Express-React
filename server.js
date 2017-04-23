@@ -1,26 +1,21 @@
-var stormpath = require('express-stormpath');
 var bodyParser = require('body-parser');
 var morgan = require('morgan');
 var path = require('path');
 var express = require('express');
 var webpack = require('webpack');
 var webpackConfig = require('./webpack.config');
-var User = require('./server/models/user');
+var passport = require('passport');
 var ora = require('ora');
-var mongoose = require('mongoose');
 var config = require('./server/config/config');
+var models = require('./server/models');
 var routes = require('./server/routes');
 var errorHandler = require('./server/responseHandlers/errorHandler');
+var passportStrategy = require('./server/services/passportService');
 
 var port = process.env.PORT || 3000;
 
 var app = express();
 
-
-mongoose.connect(config.database.url);
-mongoose.connection.on('error', function () {
-  console.log('mongodb connection error');
-});
 
 var compiler = webpack(webpackConfig);
 
@@ -47,75 +42,49 @@ app.use('/css', express.static(__dirname + '/client/css'));
 
 app.use('/apidoc', express.static(__dirname + '/client/apidoc'));
 
-app.use(stormpath.init(app, {
-  // Disable logging until startup, so that we can catch errors
-  // and display them nicely.
-  debug: 'none',
-  web: {
-    produces: ['application/json'],
-    me: {
-      expand: {
-        customData: true
-      }
-    },
-    register: {
-      form: {
-        fields: {
-          color: {
-            enabled: true,
-            label: 'Color',
-            placeholder: 'E.g. blue',
-            type: 'text'
-          }
-        }
-      }
-    }
-  },
-  postRegistrationHandler: function (account, req, res, next) {
 
-    function writeError(message) {
-      res.status(400);
-      res.json({ message: message, status: 400 });
-      res.end();
-    }
-    console.log('user: '+ account.email);
-    var user = new User({ firstName: req.body.givenName, lastName: req.body.surname, email: req.body.email, password: req.body.password});
-    user.save(function (err) {
-      if (err) return writeError(err);
-      else{
-        next();
-      }
-    });
+app.use(function (req, res, next) {
+  // Website you wish to allow to connect
+  res.setHeader('Access-Control-Allow-Origin', '*');
 
+  // Request methods you wish to allow
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+
+  // Request headers you wish to allow
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Content-Range, Content-Disposition, Content-Description, Authorization');
+
+  // Set to true if you need the website to include cookies in the requests sent
+  // to the API (e.g. in case you use sessions)
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
+  // intercept OPTIONS method
+  if ('OPTIONS' == req.method) {
+
+    res.status(200).send();
+
+  } else {
+
+    // Pass to next layer of middleware
+    next();
 
   }
-}));
+});
 
 app.use('/', routes);
+
+passport.use(passportStrategy.bearerStrategy());
 
 app.get('*', function (req, res) {
   res.sendFile(path.join(__dirname, 'client/html/index.html'));
 });
 
 
-
-spinner.text = 'Starting Dev Sever on port ' + port;
-spinner.start();
-
 // errors
 app.use(errorHandler);
 
 app.on('error', failAndExit);
-app.on('stormpath.error', failAndExit);
+
 
 app.listen(port, function () {
-  spinner.succeed();
-  spinner.text = 'Initializing Stormpath';
-  spinner.start();
-  app.on('stormpath.ready', function () {
-    spinner.succeed();
-    console.log('\nListening at http://localhost:' + port);
-    // Now bring back error logging.
-    app.get('stormpathLogger').transports.console.level = 'error';
-  });
+  console.log("listening on port: "+ port);
 });

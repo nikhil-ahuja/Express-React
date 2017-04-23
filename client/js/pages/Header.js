@@ -1,10 +1,16 @@
 import React from 'react';
-import { Link } from 'react-router';
-
-import { LoginLink, LogoutLink, NotAuthenticated, Authenticated } from 'react-stormpath';
+import { Link,browserHistory } from 'react-router';
 
 export default class Header extends React.Component {
+
+  logout(){
+    localStorage.removeItem("accessToken");
+    browserHistory.push("/");
+  }
+
   render() {
+
+    let showLogout = localStorage.getItem("accessToken");
     return (
       <nav className="navbar navbar-default navbar-static-top">
         <div className="container">
@@ -15,30 +21,23 @@ export default class Header extends React.Component {
             </button>
           </div>
           <div id="navbar-collapse" className="collapse navbar-collapse">
-            <ul className="nav navbar-nav">
-              <li><Link to="/" activeClassName="active" onlyActiveOnIndex={true}>Home</Link></li>
-              <Authenticated>
-                <li>
-                  <Link to="/profile" activeClassName="active">Profile</Link>
-                </li>
-              </Authenticated>
-            </ul>
+
             <ul className="nav navbar-nav navbar-right">
-              <NotAuthenticated>
-                <li>
-                  <LoginLink activeClassName="active" />
-                </li>
-              </NotAuthenticated>
-              <Authenticated>
-                <li>
-                  <LogoutLink />
-                </li>
-              </Authenticated>
-              <NotAuthenticated>
-                <li>
-                  <Link to="/register" activeClassName="active">Create Account</Link>
-                </li>
-              </NotAuthenticated>
+
+              <li onClick={this.logout.bind(this)} className={ showLogout ? "": "hidden"}>
+                 Logout
+              </li>
+
+              {/*<Authenticated>*/}
+                {/*<li>*/}
+                  {/*<LogoutLink />*/}
+                {/*</li>*/}
+              {/*</Authenticated>*/}
+              {/*<NotAuthenticated>*/}
+                {/*<li>*/}
+                  {/*<Link to="/register" activeClassName="active">Create Account</Link>*/}
+                {/*</li>*/}
+              {/*</NotAuthenticated>*/}
             </ul>
           </div>
         </div>

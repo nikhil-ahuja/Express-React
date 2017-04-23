@@ -1,12 +1,43 @@
 import React from 'react';
 import DocumentTitle from 'react-document-title';
+import UserService from '../services/UserService';
+import { browserHistory, Link } from 'react-router';
 
-import { RegistrationForm, LoginLink } from 'react-stormpath';
 
 export default class RegisterPage extends React.Component {
+
+  constructor() {
+    super();
+    this.state = {
+
+    };
+    this.onFormSubmit = this.onFormSubmit.bind(this);
+  }
+
+  onFormSubmit(){
+    let firstName = this.refs.firstName.value;
+    let lastName = this.refs.lastName.value;
+    let email = this.refs.email.value;
+    let password = this.refs.password.value;
+
+    let postData = {
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
+      password: password
+    };
+
+    UserService.registerUser(postData).then(function (response) {
+      browserHistory.push("/login");
+    }).catch(function (err) {
+      console.log("err: ",err);
+    });
+  }
+
   render() {
     return (
-      <DocumentTitle title={`Registration`}>
+        <div>
+
         <div className="container">
           <div className="row">
             <div className="col-xs-12">
@@ -14,73 +45,43 @@ export default class RegisterPage extends React.Component {
               <hr />
             </div>
           </div>
-          <RegistrationForm>
-            <div className='sp-login-form'>
-              <div className="row" data-spIf="account.created">
-                <div className="col-sm-offset-4 col-xs-12 col-sm-4">
-                  <p className="alert alert-success" data-spIf="account.enabled">
-                    Your account has been created. <LoginLink>Login Now</LoginLink>.
-                  </p>
-                  <div data-spIf="!account.enabled">
-                    <p className="alert alert-success">Your account has been created. Please check your email for a verification link.</p>
-                    <p className="pull-right">
-                      <LoginLink>Back to Login</LoginLink>
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className="row" data-spIf="!account.created">
-                <div className="col-xs-12">
-                  <div className="form-horizontal">
+          <form className="form-horizontal">
 
-                    <div className="form-group">
-                      <label htmlFor="givenName" className="col-xs-12 col-sm-4 control-label">First Name</label>
-                      <div className="col-xs-12 col-sm-4">
-                        <input type="text" className="form-control" id="givenName" name="givenName" placeholder="First Name" required={ true } />
-                      </div>
-                    </div>
-
-                    <div className="form-group">
-                      <label htmlFor="surname" className="col-xs-12 col-sm-4 control-label">Last Name</label>
-                      <div className="col-xs-12 col-sm-4">
-                        <input type="text" className="form-control" id="surname" name="surname" placeholder="Last Name" required={ true } />
-                      </div>
-                    </div>
-
-                    <div className="form-group">
-                      <label htmlFor="email" className="col-xs-12 col-sm-4 control-label">Email</label>
-                      <div className="col-xs-12 col-sm-4">
-                        <input type="text" className="form-control" id="email" name="email" placeholder="Email" required={ true } />
-                      </div>
-                    </div>
-
-                    <div className="form-group">
-                      <label htmlFor="customData.color" className="col-xs-12 col-sm-4 control-label">Color</label>
-                      <div className="col-xs-12 col-sm-4">
-                        <input type="text" className="form-control" id="customData.color" name="customData.color" placeholder="Color (e.g. blue)" />
-                      </div>
-                    </div>
-
-                    <div className="form-group">
-                      <label htmlFor="password" className="col-xs-12 col-sm-4 control-label">Password</label>
-                      <div className="col-xs-12 col-sm-4">
-                        <input type="password" className="form-control" id="password" name="password" placeholder="Password" required={ true } />
-                      </div>
-                    </div>
-
-                    <div key="register-button" className="form-group">
-                      <div className="col-sm-offset-4 col-sm-4">
-                        <p className="alert alert-danger" data-spIf="form.error"><span data-spBind="form.errorMessage" /></p>
-                        <button type="submit" className="btn btn-primary">Register</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+            <div className="form-group">
+              <label className="control-label col-sm-2" for="email">First Name:</label>
+              <div className="col-sm-6">
+                <input type="text" ref="firstName" className="form-control" id="email" placeholder="Enter First Name" />
               </div>
             </div>
-          </RegistrationForm>
+
+            <div className="form-group">
+              <label className="control-label col-sm-2" for="email">Last Name:</label>
+              <div className="col-sm-6">
+                <input type="text" ref="lastName" className="form-control" id="email" placeholder="Enter Last Name" />
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label className="control-label col-sm-2" for="email">Email:</label>
+              <div className="col-sm-6">
+                <input type="email" ref="email" className="form-control" id="email" placeholder="Enter email" />
+              </div>
+            </div>
+            <div className="form-group">
+              <label className="control-label col-sm-2" for="pwd">Password:</label>
+              <div className="col-sm-6">
+                <input type="password" ref="password" className="form-control" id="pwd" placeholder="Enter password" />
+              </div>
+            </div>
+
+            <div className="form-group">
+              <div className="col-sm-offset-2 col-sm-10">
+                <button id="loginUser" type="button" onClick={this.onFormSubmit} className="btn btn-primary">Submit</button>
+              </div>
+            </div>
+          </form>
         </div>
-      </DocumentTitle>
+      </div>
     );
   }
 }

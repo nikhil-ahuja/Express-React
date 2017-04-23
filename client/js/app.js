@@ -2,27 +2,40 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { IndexRoute, Route, browserHistory } from 'react-router';
 import ReactStormpath, { Router, HomeRoute, LoginRoute, AuthenticatedRoute } from 'react-stormpath';
-import { ChangePasswordPage, MasterPage, IndexPage, LoginPage, DashboardPage, RegisterPage, ResetPasswordPage, VerifyEmailPage, ProfilePage } from './pages';
+import {  MasterPage, IndexPage, LoginPage, DashboardPage, RegisterPage } from './pages';
 
-ReactStormpath.init({
-  endpoints: {
-    me: '/v1/users/me'
+function loggedIn() {
+  return localStorage.getItem('accessToken') ? true : false;
+}
+
+function requireAuth(nextState, replace) {
+  if (!loggedIn()) {
+    replace({
+      pathname: '/',
+
+      state: { nextPathname: nextState.location.pathname }
+    })
   }
-});
+}
+
+function checkIfLoggedIn(nextState, replace){
+  if(loggedIn()){
+    let pathName = '/dashboard';
+    replace({
+      pathname: pathName,
+      state: { nextPathname: nextState.location.pathname }
+    })
+  }
+}
+
 
 ReactDOM.render(
     <Router history={browserHistory}>
       <HomeRoute path='/' component={MasterPage}>
-        <IndexRoute component={IndexPage} />
-        <LoginRoute path='/login' component={LoginPage} />
-        <Route path='/verify' component={VerifyEmailPage} />
-        <Route path='/register' component={RegisterPage} />
-        <Route path='/change' component={ChangePasswordPage} />
-        <Route path='/forgot' component={ResetPasswordPage} />
-        <AuthenticatedRoute>
-          <Route path='/profile' component={ProfilePage} />
-            <Route path='/dashboard' component={DashboardPage} />
-        </AuthenticatedRoute>
+        <IndexRoute component={LoginPage} onEnter={checkIfLoggedIn} />
+        <Route path='/register' component={RegisterPage} onEnter={checkIfLoggedIn} />
+        <Route path='/dashboard' component={DashboardPage} onEnter={requireAuth} />
+
       </HomeRoute>
     </Router>,
     document.getElementById('app-container')

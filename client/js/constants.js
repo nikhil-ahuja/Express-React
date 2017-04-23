@@ -1,5 +1,6 @@
 module.exports = {
 
-    CARS: '/cars'
+    BOOKS: '/books',
+    USERS: '/users'
 
 };

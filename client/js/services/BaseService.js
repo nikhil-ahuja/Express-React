@@ -1,6 +1,4 @@
 import request from 'reqwest';
-import {BASE_URL} from '../constants';
-
 
 class BaseService {
 
@@ -13,7 +11,7 @@ class BaseService {
 
     let headers = {};
     if(authToken){
-      headers['Authorization'] = 'Bearer '+authToken;
+      headers['Authorization'] = authToken;
     }
     if(contentType){
       headers['Content-Type'] = contentType
@@ -45,7 +43,7 @@ class BaseService {
       'Content-Type': 'application/json'
     };
     if (authToken){
-      headers["Authorization"] = 'Bearer '+authToken
+      headers["Authorization"] = authToken
     }
     return request({
       url: url,
@@ -61,7 +59,7 @@ class BaseService {
 
     let headers = {};
     if(authToken){
-      headers['Authorization'] = 'Bearer '+authToken;
+      headers['Authorization'] = authToken;
     }
     if(contentType){
       headers['Content-Type'] = contentType
@@ -70,6 +68,26 @@ class BaseService {
     return request({
       url: baseUrl+relativeUrl,
       method: "PUT",
+      type: 'json',
+      contentType: 'application/json',
+      data: data,
+      headers: headers
+    })
+  }
+
+  static createDeleteRequest(baseUrl, relativeUrl, authToken, contentType, data=null){
+
+    let headers = {};
+    if(authToken){
+      headers['Authorization'] = authToken;
+    }
+    if(contentType){
+      headers['Content-Type'] = contentType
+    }
+
+    return request({
+      url: baseUrl+relativeUrl,
+      method: "DELETE",
       type: 'json',
       contentType: 'application/json',
       data: data,
